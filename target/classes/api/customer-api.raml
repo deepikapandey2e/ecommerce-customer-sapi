@@ -1,0 +1,76 @@
+#%RAML 1.0
+title: Customer Api
+version: v1
+#baseUri: http://localhost:8081/api/v1
+protocols: [HTTP, HTTPS]
+
+
+ 
+mediaType: 
+  - application/json
+
+securitySchemes:
+  basic : !include securitySchemes/basicAuthenticationSecurityScheme.raml
+
+types:
+ addCustomerRequest: !include  datatypes/Request/addCustomerRequest.raml      
+ addCustomerResponse: !include  datatypes/Response/addCustomerResponse.raml
+ updateCustomerRequest: !include  datatypes/Request/updateCustomerRequest.raml      
+ updateCustomerResponse: !include  datatypes/Response/updateCustomerResponse.raml
+ fetchCustomer: !include  datatypes/Response/fetchCustomer.raml
+ errorResponse: !include datatypes/errorResponse/errorResponse.raml
+
+traits:
+  errorResponses: !include traits/errorTrait.raml
+  commonHeaders: !include traits/commonHeaders.raml
+  
+
+
+
+/customers:
+  securedBy: [basic]
+  post:
+    is: [errorResponses,commonHeaders]
+
+    displayName: Create customer
+    description: Create customer   
+    body:
+      application/json:
+        type: addCustomerRequest
+        example:  !include  examples/Request/addCustomerRequest.json
+
+    responses:
+      200:
+        body:
+          application/json:
+            type: addCustomerResponse
+            example: !include  examples/Response/addCustomerResponse.json
+  /{customerId}:
+    securedBy: [basic]
+    get:
+      is: [errorResponses,commonHeaders]
+      displayName: Get customers
+      description: Return customer information by customerId 
+      responses:
+        200: 
+          body:
+            application/json:
+              type: fetchCustomer
+              example: !include examples/Response/fetchCustomer.json
+
+    put:
+      is: [errorResponses,commonHeaders]
+      displayName: Update customer
+      description: Update customer  by customerId  
+      body:
+        application/json:
+          type: updateCustomerRequest
+          example: !include examples/Request/updateCustomerRequest.json 
+      responses:
+        200:
+          body: 
+              application/json: 
+                type: updateCustomerResponse
+                example: !include examples/Response/updateCustomerResponse.json
+              
+          

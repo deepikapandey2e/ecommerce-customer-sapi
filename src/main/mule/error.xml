@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	
+	<error-handler doc:name="globalErrorHandler" name="globalErrorHandler">
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="0eb13d14-aee9-4faa-b327-a361d930a5c6" doc:name="serErrorVars">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+					<ee:set-variable resource="dataweave/error-400.dwl" variableName="errorDesc" />
+                    
+</ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="errorSubflow" doc:id="f749c711-5b33-4201-bbb8-5aec52768449" name="errorLoggingSub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="bb0e295c-2606-4cdb-89eb-e788a1afa1c1" doc:name="setErrorVars">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+					<ee:set-variable resource="dataweave/error-404.dwl" variableName="errorDesc" />
+                    
+</ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="errorSubflow" doc:id="2fe59ae7-c0b3-4bf7-9378-cea315e12027" name="errorLoggingSub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="834b2356-ddd9-43c1-963f-3cd995cc73d6" doc:name="setErrorVars">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+					<ee:set-variable resource="dataweave/error-405.dwl" variableName="errorDesc" />
+                    
+</ee:variables>
+                </ee:transform>
+			<flow-ref doc:name="errorSubflow" doc:id="fde19580-64b3-44a5-a8d1-c27ff8557a76" name="errorLoggingSub_Flow"/>
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="7a9cbd23-d98b-4998-99bd-25efd73ab2ab" doc:name="setErrorVars">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+					<ee:set-variable resource="dataweave/error-406.dwl" variableName="errorDesc" />
+                    
+</ee:variables>
+                </ee:transform>
+			<flow-ref doc:name="errorSubflow" doc:id="c4c5c124-ef54-42ef-ae29-670db49fb539" name="errorLoggingSub_Flow"/>
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="64bbcc62-b64c-4aaf-a60a-22110094d2df" doc:name="setErrorVars">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+					<ee:set-variable resource="dataweave/error-415.dwl" variableName="errorDesc" />
+                    
+</ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="errorSubflow" doc:id="730a3636-6792-474e-b6e7-d776ce6b65a0" name="errorLoggingSub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="ce3c3f82-7b13-4d7b-94a6-9acec00d1f45" doc:name="setErrorVars">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+					<ee:set-variable resource="dataweave/error-501.dwl" variableName="errorDesc" />
+                    
+</ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="errorSubflow" doc:id="e0d282de-f992-4cfa-96c0-18902469427c" name="errorLoggingSub_Flow"/>
+            </on-error-propagate>
+        </error-handler>
+	<sub-flow name="errorLoggingSub_Flow" doc:id="64b7cc0e-53e7-4a49-981a-d4eb1c366f8a" >
+		<ee:transform doc:name="Error Message" doc:id="92c32777-88c6-4b90-9226-9568abc16fb5" >
+			<ee:message >
+				<ee:set-payload resource="dataweave/error-message.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="GlobalExceptionLogger" doc:id="c0738b1b-4d32-4264-acc1-4d1bc88e4d9f" message="#[payload]"/>
+	</sub-flow>
+	
+</mule>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	
+	<flow name="post:\customers:application\json:customer-api-config">
+        <logger level="INFO" doc:name="Start Logger" doc:id="2b8f4d60-9741-4e0b-a2cc-a02ba77b3b8f" message='"Start of Customer Create Flow": #[payload] '/>
+		<ee:transform doc:name="originalPayload" doc:id="9b42eb70-8dc3-4765-9619-fdfcacca04a1" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable resource="dataweave/originalPayloadVar.dwl" variableName="originalPayloadVar" />
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="6ac09f4e-6905-4c98-8b7a-71befd28f7ec" >
+			<when expression='#[attributes.header.source_system == "sfdc"]'>
+				<logger level="INFO" doc:name=" Logger" doc:id="afaecdbd-6cb3-470b-b91e-100366569899" message='"In  flow where Source system is Salesforce"'/>
+				<ee:transform doc:name="Set AuthKey" doc:id="0d156102-fe3a-4190-8028-ec2c5b2c6a25" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="cosmosHeader" ><![CDATA[%dw 2.0
+import java!cosmosdb::GenerateCosmosDBAuthToken
+output application/java
+var verb = "POST"
+var resourceType = "docs" 
+var resourceId = "dbs/customer/colls/reseller"
+var key = "FKenKdt3rAjZOqGiUEmihIhaVIF0ArDJr7MT7J9ixT0UN20efsIvXPLiGIg6LDAEiaSfrr6pXqICACDb9O5fiQ=="
+var keyType = "master"
+var tokenVersion = "1.0"		 
+var serverDateTime = GenerateCosmosDBAuthToken::getServerTime() as String
+---
+{
+	serverDateTime: serverDateTime,
+	authKey: GenerateCosmosDBAuthToken::generate(verb, resourceType, resourceId, key, keyType, tokenVersion, serverDateTime)
+}
+]]></ee:set-variable>
+			
+</ee:variables>
+		</ee:transform>
+		<http:request method="POST" doc:name="Cosmos DB API for SQL insert" doc:id="c8a77043-58e4-4393-b6b2-d8a53a86d2dc" config-ref="CosmosDBConfiguration" path="/dbs/customer/colls/reseller/docs">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Accept" : "application/json",
+	"x-ms-version" : "2016-07-11",
+	"Authorization" : vars.cosmosHeader.authKey,
+	"x-ms-date" : vars.cosmosHeader.serverDateTime,
+	"Content-Type" : "application/json",
+	"x-ms-documentdb-partitionkey" : '["' ++ payload.customerId ++ '"]'
+}]]]></http:headers>
+		</http:request>
+				
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Payload to insert into SFDC" doc:id="ff47c1cc-674a-44a7-9205-4ca9e03fc468" >
+					<ee:message >
+						<ee:set-payload resource="dataweave/requestPayload.dwl" />
+					</ee:message>
+				</ee:transform>
+				<salesforce:create doc:name="Create" doc:id="5e990e0b-e0bf-4eec-b5e5-5049805a1473" type="customer__c" config-ref="Salesforce_Config"/>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Response Message" doc:id="0a7fc3e9-0398-4f07-8a55-94c8fbded920" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"customerId":uuid(),
+	"status":"success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Logger" doc:id="24d30473-7cfa-4cf4-95db-fc075b5d45c6" message='"End of Customer Create Flow" #[payload]'/>
+    
+</flow>
+	</mule>

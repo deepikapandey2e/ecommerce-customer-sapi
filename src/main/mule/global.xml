@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+    <http:listener-config name="customer-api-httpListenerConfig">
+        <http:listener-connection host="${api.host}" port="${api.port}" />
+    </http:listener-config>
+    <apikit:config name="customer-api-config" api="customer-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<configuration-properties doc:name="Configuration properties" doc:id="d900284e-39f8-4580-84ba-b8913d244ce9" file="config/config-${env}.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="597596c7-8ec6-402c-a861-523e6916e074" key="${secure.properties.key}" file="config/secure/config-${env}.yaml"/>
+	<configuration-properties doc:name="Configuration properties" doc:id="4e71e09f-04b1-42b0-81b0-abb1f9790eda" file="config/secure/config-${env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="b6b18833-281b-44b4-b266-8a406ff64075" name="env" value="dev" />
+	<global-property doc:name="Global Property" doc:id="192c9c07-88fb-424a-bb65-505b330c2411" name="secure.properties.key" value="knauf12345678901" />
+	<configuration-properties doc:name="Configuration properties" doc:id="6218da2e-0676-4e03-b061-83ff106280b6" file="config/config-common.yaml" />
+	
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="ea8d6517-2717-4b8e-b030-eed3d2033e08" >
+		<salesforce:cached-basic-connection username="${secure::sfdc.user}" password="${secure::sfdc.password}" securityToken="${secure::sfdc.token}" />
+	</salesforce:sfdc-config><http:request-config name="CosmosDBConfiguration" doc:name="CosmosDBConfiguration" doc:id="830b8e4e-65ce-4795-9355-54695bbe9fb3" >
+		<http:request-connection protocol="HTTPS" host="customerdetaildb.documents.azure.com" port="443" />
+	</http:request-config>
+	<!-- <api-gateway:autodiscovery apiId="${api.id}" doc:name="API Autodiscovery" doc:id="dd50f251-82eb-4a7f-af0c-f49b08c46f54" flowRef="customer-api-main" /> -->
+	
+</mule>

@@ -1,0 +1,6 @@
+api:
+ basePath: '${api.name}/${api.version}'
+ name: 'ecommerce-customer-sapi'
+ version: 'v1'
+
+ 
