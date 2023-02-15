@@ -6,6 +6,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<sub-flow name="salesforceQuerySubflow" doc:id="4dba7da8-8cb5-472e-8da6-beea62697db2" >
+		<salesforce:query doc:name="Query Salesforce  by CustomerId" doc:id="495cc707-0a3f-4c6f-a021-0455b2c578bd" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query>select customerId__c, firstName__c,lastName__c,companyName__c, email__c,phone__c   from customer__c where customerId__c =':customerId'</salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[output application/java
+---
+{
+	customerId : vars.customerId
+}]]]></salesforce:parameters>
+		</salesforce:query>
+	</sub-flow>
 	<flow name="get:\customers\(customerId):customer-api-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="17e8f5df-c24f-4ef0-81ab-ac90a2c4f194" doc:name="extract Customer Id">
             <ee:variables>
@@ -13,14 +23,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
             
 </ee:variables>
         </ee:transform>
-		<salesforce:query doc:name="Query Salesforce  by CustomerId" doc:id="495cc707-0a3f-4c6f-a021-0455b2c578bd" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query >select customerId__c, firstName__c,lastName__c,companyName__c, email__c,phone__c   from customer__c where customerId__c =':customerId'</salesforce:salesforce-query>
-			<salesforce:parameters ><![CDATA[#[output application/java
----
-{
-	customerId : vars.customerId
-}]]]></salesforce:parameters>
-		</salesforce:query>
+		<flow-ref doc:name="Flow Reference" doc:id="42d3a955-8e0e-421a-a1c4-c3ac1f540bc0" name="salesforceQuerySubflow" />
 		<choice doc:name="Choice" doc:id="2a3ab274-ba4e-4d2d-90fc-0be4afb568f1" >
 			<when expression="#[sizeOf(payload)&gt; 0]">
 				<ee:transform doc:name="Final Response" doc:id="1cd854e1-8bb5-47e3-a12d-1a218f23bbc1">

@@ -70,7 +70,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
                 </ee:transform>
                 <flow-ref doc:name="errorSubflow" doc:id="730a3636-6792-474e-b6e7-d776ce6b65a0" name="errorLoggingSub_Flow"/>
             </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED" enableNotifications="true" logException="true">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="ce3c3f82-7b13-4d7b-94a6-9acec00d1f45" doc:name="setErrorVars">
                     <ee:message>
                     </ee:message>
@@ -81,6 +81,18 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 </ee:variables>
                 </ee:transform>
                 <flow-ref doc:name="errorSubflow" doc:id="e0d282de-f992-4cfa-96c0-18902469427c" name="errorLoggingSub_Flow"/>
+            </on-error-propagate>
+            <on-error-propagate type="ANY" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e5ade45e-6915-4d97-92ed-9d01b3de97e2" doc:name="setErrorVars">
+                    <ee:message>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[500]]></ee:set-variable>
+					<ee:set-variable resource="dataweave/error-500.dwl" variableName="errorDesc" />
+                    
+</ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="errorSubflow" doc:id="6fa793f4-178d-43a0-b80a-30f701654906" name="errorLoggingSub_Flow"/>
             </on-error-propagate>
         </error-handler>
 	<sub-flow name="errorLoggingSub_Flow" doc:id="64b7cc0e-53e7-4a49-981a-d4eb1c366f8a" >

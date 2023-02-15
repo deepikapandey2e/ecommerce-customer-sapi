@@ -10,25 +10,19 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	
 	<flow name="put:\customers\(customerId):application\json:customer-api-config">
 		<logger level="INFO" doc:name="Start Logger" doc:id="db03ef63-c72d-4ffe-b247-ec5ca9074d61" message='"Start of update customer flow"'/>
-		<ee:transform doc:name="Transform Message" doc:id="50ceb4a8-ba66-40c4-a118-5cebf56cdf7d" >
+		<ee:transform doc:name="Extract CustomerID" doc:id="50ceb4a8-ba66-40c4-a118-5cebf56cdf7d" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
----
-{
-}]]></ee:set-payload>
+				<ee:set-payload resource="dataweave/updateCustomerPayload.dwl" />
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="customerId" ><![CDATA[attributes.uriParams.customerId]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<salesforce:update doc:name="Update" doc:id="6b4b29e1-3328-49f6-b39b-c840567b5e14" config-ref="Salesforce_Config" type="customer__c"/>
-		<ee:transform doc:name="Transform Message" doc:id="4ea1edf1-1515-4f3e-8f32-1449cccd350f">
+		<!-- <salesforce:update doc:name="Update" doc:id="6b4b29e1-3328-49f6-b39b-c840567b5e14" config-ref="Salesforce_Config" type="customer__c"/> -->
+		<salesforce:upsert type="customer__c" doc:name="Upsert" doc:id="4641f205-8f26-4503-91c5-fbd3171f31b1" config-ref="Salesforce_Config" externalIdFieldName="customerId__c"/>
+		<ee:transform doc:name="Response Message" doc:id="4ea1edf1-1515-4f3e-8f32-1449cccd350f">
 			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
-output application/java
----
-payload]]></ee:set-payload>
+				<ee:set-payload resource="dataweave/updateCustomerResponse.dwl" />
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name=" End Logger" doc:id="bebf9fb5-4d16-4e9e-a49c-5b1221f0b5bd" message='"End of update customer flow"'/>

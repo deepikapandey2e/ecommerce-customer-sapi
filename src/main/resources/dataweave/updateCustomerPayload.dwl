@@ -3,7 +3,7 @@ output application/json
 ---
  
 [ {
-  customerId__c: vars.uniqueCustomerIdVar,
+  customerId__c: attributes.uriParams.customerId,
   firstName__c: payload.firstName,
   lastName__c: payload.lastName,
   companyName__c: payload.companyName,

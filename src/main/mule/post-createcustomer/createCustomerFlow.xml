@@ -18,9 +18,44 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 				<ee:set-variable resource="dataweave/originalPayloadVar.dwl" variableName="originalPayloadVar" />
 			</ee:variables>
 		</ee:transform>
+		<ee:transform doc:name="createUniqueCustomerId" doc:id="baefd72c-ed3a-459c-97c1-2960ec05d4ae">
+					<ee:message>
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable resource="dataweave/uniqueCustomerId.dwl" variableName="uniqueCustomerIdVar" />
+					</ee:variables>
+				</ee:transform>
 		<choice doc:name="Choice" doc:id="6ac09f4e-6905-4c98-8b7a-71befd28f7ec" >
-			<when expression='#[attributes.header.source_system == "sfdc"]'>
+			<when expression='#[attributes.headers.source_system == "salesforce"]'>
 				<logger level="INFO" doc:name=" Logger" doc:id="afaecdbd-6cb3-470b-b91e-100366569899" message='"In  flow where Source system is Salesforce"'/>
+				<ee:transform doc:name="customerPayload" doc:id="4f7af4ad-4801-4a60-aded-7e583e856fa0">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "id":vars.uniqueCustomerIdVar,
+  "customerId": vars.uniqueCustomerIdVar,
+  "personalInformation": {
+    "firstName": payload.firstName,
+    "lastName": payload.lastName,
+    "companyName": payload.companyName,
+    "email": payload.email,
+    "phone": payload.phone
+  },
+  "address": [
+    {
+      "street": payload.street,
+      "houseNumber": payload.houseNumber,
+      "city": payload.city,
+      "country": payload.country,
+      "postalCode": payload.postalCode
+    }
+  ]
+}
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
 				<ee:transform doc:name="Set AuthKey" doc:id="0d156102-fe3a-4190-8028-ec2c5b2c6a25" >
 			<ee:message >
 			</ee:message>
@@ -30,7 +65,7 @@ import java!cosmosdb::GenerateCosmosDBAuthToken
 output application/java
 var verb = "POST"
 var resourceType = "docs" 
-var resourceId = "dbs/customer/colls/reseller"
+var resourceId = "dbs/CustomerContacts/colls/customers"
 var key = "FKenKdt3rAjZOqGiUEmihIhaVIF0ArDJr7MT7J9ixT0UN20efsIvXPLiGIg6LDAEiaSfrr6pXqICACDb9O5fiQ=="
 var keyType = "master"
 var tokenVersion = "1.0"		 
@@ -44,7 +79,7 @@ var serverDateTime = GenerateCosmosDBAuthToken::getServerTime() as String
 			
 </ee:variables>
 		</ee:transform>
-		<http:request method="POST" doc:name="Cosmos DB API for SQL insert" doc:id="c8a77043-58e4-4393-b6b2-d8a53a86d2dc" config-ref="CosmosDBConfiguration" path="/dbs/customer/colls/reseller/docs">
+		<http:request method="POST" doc:name="Cosmos DB API for SQL insert" doc:id="c8a77043-58e4-4393-b6b2-d8a53a86d2dc" config-ref="CosmosDBConfiguration" path="/dbs/CustomerContacts/colls/customers/docs">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -64,17 +99,17 @@ var serverDateTime = GenerateCosmosDBAuthToken::getServerTime() as String
 						<ee:set-payload resource="dataweave/requestPayload.dwl" />
 					</ee:message>
 				</ee:transform>
-				<salesforce:create doc:name="Create" doc:id="5e990e0b-e0bf-4eec-b5e5-5049805a1473" type="customer__c" config-ref="Salesforce_Config"/>
+				<salesforce:create doc:name="Create" doc:id="5e990e0b-e0bf-4eec-b5e5-5049805a1473" type="customer__c" config-ref="Salesforce_Config" target="sfdcCustomer"/>
 			</otherwise>
 		</choice>
 		<ee:transform doc:name="Response Message" doc:id="0a7fc3e9-0398-4f07-8a55-94c8fbded920" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 {
-	"customerId":uuid(),
-	"status":"success"
+	"customerId":vars.uniqueCustomerIdVar,
+	"status":"successfully Created"
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>

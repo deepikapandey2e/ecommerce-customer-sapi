@@ -26,6 +26,6 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	</salesforce:sfdc-config><http:request-config name="CosmosDBConfiguration" doc:name="CosmosDBConfiguration" doc:id="830b8e4e-65ce-4795-9355-54695bbe9fb3" >
 		<http:request-connection protocol="HTTPS" host="customerdetaildb.documents.azure.com" port="443" />
 	</http:request-config>
-	<!-- <api-gateway:autodiscovery apiId="${api.id}" doc:name="API Autodiscovery" doc:id="dd50f251-82eb-4a7f-af0c-f49b08c46f54" flowRef="customer-api-main" /> -->
+	<api-gateway:autodiscovery apiId="${api.id}" doc:name="API Autodiscovery" doc:id="dd50f251-82eb-4a7f-af0c-f49b08c46f54" flowRef="customer-api-main" />
 	
 </mule>

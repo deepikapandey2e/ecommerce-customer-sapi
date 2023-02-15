@@ -1,9 +1,12 @@
 api:
- id: ''
+ id: '18495822'
  port: '8081'
  host: 'localhost'
  
 sfdc:
    user:"![Ab7Ez5St3zrQpEEe5wNq7mM+qKThm4Rywx8dA20PKLE=]"
+   
+azure:
+   key: "FKenKdt3rAjZOqGiUEmihIhaVIF0ArDJr7MT7J9ixT0UN20efsIvXPLiGIg6LDAEiaSfrr6pXqICACDb9O5fiQ=="
  
  
