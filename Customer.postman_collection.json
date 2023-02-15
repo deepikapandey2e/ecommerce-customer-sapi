@@ -1,0 +1,149 @@
+{
+	"info": {
+		"_postman_id": "97d9abff-3726-49f9-a90e-1ca107c3143d",
+		"name": "Customer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Customer in SFDC",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "source_system",
+						"type": "text",
+						"value": "resellers"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"firstName\": \"test111updated\",\r\n    \"lastName\": \"test111\",\r\n    \"companyName\": \"uyyy\",\r\n    \"email\": \"test111@gmail.com\",\r\n    \"phone\": \"+499876554\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/ecommerce-customer-sapi/v1/api/customers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"ecommerce-customer-sapi",
+						"v1",
+						"api",
+						"customers"
+					]
+				},
+				"description": "Create Customer In SFDC"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Customer in CosmosDB",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "source_system",
+						"type": "text",
+						"value": "salesforce"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"firstName\": \"test111updated\",\r\n    \"lastName\": \"test111\",\r\n    \"companyName\": \"uyyy\",\r\n    \"email\": \"test111@gmail.com\",\r\n    \"phone\": \"+499876554\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/ecommerce-customer-sapi/v1/api/customers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"ecommerce-customer-sapi",
+						"v1",
+						"api",
+						"customers"
+					]
+				},
+				"description": "Create Customer In SFDC"
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Customer from SFDC",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "source_system",
+						"value": "sfdc",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/ecommerce-customer-sapi/v1/api/customers/4d4de7d6-7f5e-4778-9c70-babba6c25c55",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"ecommerce-customer-sapi",
+						"v1",
+						"api",
+						"customers",
+						"4d4de7d6-7f5e-4778-9c70-babba6c25c55"
+					]
+				},
+				"description": "Fetch Customer from SFDC"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer in SFDC",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"firstName\": \"test111updated\",\r\n    \"lastName\": \"test111\",\r\n    \"companyName\": \"uyyy\",\r\n    \"email\": \"test111@gmail.com\",\r\n    \"phone\": \"+499876554\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/ecommerce-customer-sapi/v1/api/customers/e04bd95a-ca7f-4838-b3c3-b1d444b2eac6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"ecommerce-customer-sapi",
+						"v1",
+						"api",
+						"customers",
+						"e04bd95a-ca7f-4838-b3c3-b1d444b2eac6"
+					]
+				},
+				"description": "Update customer in salesforce"
+			},
+			"response": []
+		}
+	]
+}
